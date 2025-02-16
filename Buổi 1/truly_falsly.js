@@ -61,3 +61,13 @@ console.log(typeof {}); // object
 
 //* Cách kiểm tra array [] | Phân biệt với object {}
 console.log(Array.isArray([])); // true
+
+//! Toán tử LOGIC
+//* `&&` (and) -> Trả về giá trị flase gần nhất. Nếu không có giá trị false -> Trả về giá trị true cuối cùng
+console.log(1 && 2 && 3); // 3
+console.log(true && true && 1); // 1
+console.log("" && true && []); // ""
+
+//* `||` (or) -> Trả về giá trị true gần nhất. Nếu không có giá trị true -> Trả về giá trị false cuối cùng
+console.log(true || null || undefined); // true
+console.log(null || 0 || "1"); // 1
