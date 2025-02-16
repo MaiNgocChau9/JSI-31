@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Planets</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        img{
+            width: 80%;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Destination</h1>
+    <div id="destination">
+        <h3 class="planet">Planet</h3>
+        <img class="planet_img" src="" alt="Image">
+    </div>
+
+    <script>
+        const planet = document.querySelector(".planet");
+        const planet_image = document.querySelector(".planet_img");
+
+        window.addEventListener("load", function() {
+            fetch("https://handlers.education.launchcode.org/static/planets.json")
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(json) {
+                    let index = Math.floor(Math.random() * json.length);
+                    
+                    planet.innerHTML = json[index].name;
+                    planet_image.src = json[index].image;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        });
+    </script>
+</body>
+</html>
