@@ -24,25 +24,7 @@
         <img class="planet_img" src="" alt="Image">
     </div>
 
-    <script>
-        const planet = document.querySelector(".planet");
-        const planet_image = document.querySelector(".planet_img");
-
-        window.addEventListener("load", function() {
-            fetch("https://handlers.education.launchcode.org/static/planets.json")
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(json) {
-                    let index = Math.floor(Math.random() * json.length);
-                    
-                    planet.innerHTML = json[index].name;
-                    planet_image.src = json[index].image;
-                })
-                .catch(function(error) {
-                    console.log(error);
-                });
-        });
-    </script>
+    <script src="./planet.js"></script>
+    
 </body>
 </html>
