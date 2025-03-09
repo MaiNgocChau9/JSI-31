@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Authentication Demo</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div class="auth-container" id="login-container">
+            <h1>Login</h1>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn primary-btn" id="login-btn">Login</button>
+                <div class="switch-form">
+                    Don't have an account? <a href="./signin.html" id="show-signup">Signup</a>
+                </div>
+                <div class="divider">
+                    <span>Or</span>
+                </div>
+                <button type="button" class="btn social-btn facebook-btn" id="facebook-login-btn">
+                    <i class="fab fa-facebook-f"></i>
+                    Login with Facebook
+                </button>
+                <button type="button" class="btn social-btn google-btn" id="google-login-btn">
+                    <i class="fab fa-google"></i>
+                    Login with Google
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module" src="./js/app.js"></script>
+</body>
+</html>
