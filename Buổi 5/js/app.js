@@ -18,7 +18,7 @@ const firebaseConfig = {
     messagingSenderId: "320863785460",
     appId: "1:320863785460:web:3150be47b8b9d70607a9a1",
     measurementId: "G-2VNGMVYMME"
-};
+  };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -110,7 +110,8 @@ if (logoutBtn) {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         if (userEmailDisplay) {
-            userEmailDisplay.textContent = user.email;
+            userEmailDisplay.textContent = user.displayName;
+            console.log(user);
         }
     } else {
         if (userEmailDisplay) {

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ứng dụng Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .header {
+            background-color: #6a5acd;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            background-color: #6a5acd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #5849b6;
+        }
+        
+        .home-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quiz-screen {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background-color: #e9e9ff;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #d0d0ff;
+        }
+        
+        .option.selected {
+            background-color: #6a5acd;
+            color: white;
+        }
+        
+        .score-display {
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .leaderboard {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .leaderboard-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #6a5acd;
+        }
+        
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .score-table th, .score-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .score-table th {
+            background-color: #f0f0f0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #6a5acd;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ứng dụng Quiz</h1>
+        </div>
+        
+        <!-- Màn hình chính -->
+        <div class="home-screen" id="homeScreen">
+            <h2>Chào mừng đến với ứng dụng Quiz!</h2>
+            <button class="btn" id="startQuizBtn">Bắt đầu Quiz</button>
+            <button class="btn" id="viewLeaderboardBtn">Xem bảng xếp hạng</button>
+        </div>
+        
+        <!-- Màn hình Quiz -->
+        <div class="quiz-screen" id="quizScreen">
+            <div class="question" id="questionText">
+                Câu hỏi sẽ hiển thị ở đây
+            </div>
+            <div class="options" id="optionsContainer">
+                <div class="option" data-index="0">Đáp án A</div>
+                <div class="option" data-index="1">Đáp án B</div>
+                <div class="option" data-index="2">Đáp án C</div>
+                <div class="option" data-index="3">Đáp án D</div>
+            </div>
+            <div class="score-display" id="scoreDisplay">
+                Điểm: 0
+            </div>
+            <button class="btn" id="nextQuestionBtn">Câu tiếp theo</button>
+            <button class="btn" id="saveScoreBtn">Lưu điểm</button>
+        </div>
+        
+        <!-- Bảng xếp hạng -->
+        <div class="leaderboard" id="leaderboardScreen">
+            <h2 class="leaderboard-title">Bảng xếp hạng</h2>
+            <table class="score-table" id="scoreTable">
+                <thead>
+                    <tr>
+                        <th>Xếp hạng</th>
+                        <th>Tên</th>
+                        <th>Điểm</th>
+                    </tr>
+                </thead>
+                <tbody id="scoreTableBody">
+                    <!-- Dữ liệu bảng xếp hạng sẽ được thêm ở đây -->
+                </tbody>
+            </table>
+            <button class="btn" id="backToHomeBtn">Quay lại</button>
+        </div>
+        
+        <!-- Modal lưu điểm -->
+        <div class="modal" id="saveScoreModal">
+            <div class="modal-content">
+                <h3 class="modal-title">Lưu điểm của bạn</h3>
+                <div class="form-group">
+                    <label for="playerName">Tên của bạn:</label>
+                    <input type="text" id="playerName" placeholder="Nhập tên của bạn">
+                </div>
+                <div class="btn-group">
+                    <button class="btn" id="cancelSaveBtn">Hủy</button>
+                    <button class="btn" id="confirmSaveBtn">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, set, push, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8huygjO3NPAq3v42nGpbw9WiroQ3hWDs",
+            authDomain: "jsi-31.firebaseapp.com",
+            databaseURL: "https://jsi-31-default-rtdb.firebaseio.com",
+            projectId: "jsi-31",
+            storageBucket: "jsi-31.firebasestorage.app",
+            messagingSenderId: "320863785460",
+            appId: "1:320863785460:web:3150be47b8b9d70607a9a1",
+            measurementId: "G-2VNGMVYMME",
+        };
+
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        // Kiểm tra kết nối thành công
+        if (app) {
+            console.log("Kết nối Firebase thành công");
+        } else {
+            console.log("Kết nối Firebase thất bại");
+        }
+
+        // Kết nối đến Realtime Database
+        const database = getDatabase(app);
+
+        // Elements
+        const homeScreen = document.getElementById('homeScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const leaderboardScreen = document.getElementById('leaderboardScreen');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const viewLeaderboardBtn = document.getElementById('viewLeaderboardBtn');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const saveScoreBtn = document.getElementById('saveScoreBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const saveScoreModal = document.getElementById('saveScoreModal');
+        const playerNameInput = document.getElementById('playerName');
+        const cancelSaveBtn = document.getElementById('cancelSaveBtn');
+        const confirmSaveBtn = document.getElementById('confirmSaveBtn');
+        const scoreTableBody = document.getElementById('scoreTableBody');
+
+        // Dữ liệu quiz mẫu
+        const quizData = [
+            {
+                question: "JavaScript là ngôn ngữ lập trình gì?",
+                options: [
+                    "Ngôn ngữ lập trình biên dịch",
+                    "Ngôn ngữ lập trình thông dịch",
+                    "Ngôn ngữ lập trình hướng đối tượng",
+                    "Tất cả các đáp án trên"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "HTML là viết tắt của?",
+                options: [
+                    "Hyper Text Markup Language",
+                    "High Tech Modern Language",
+                    "Hyper Transfer Markup Language",
+                    "Hyper Text Modern Language"
+                ],
+                correctIndex: 0
+            },
+            {
+                question: "CSS được sử dụng để làm gì?",
+                options: [
+                    "Tạo kết nối đến cơ sở dữ liệu",
+                    "Thêm chức năng tương tác cho trang web",
+                    "Định dạng và trang trí trang web",
+                    "Tạo cấu trúc cho trang web"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "Firebase là gì?",
+                options: [
+                    "Một ngôn ngữ lập trình",
+                    "Một nền tảng phát triển ứng dụng",
+                    "Một hệ quản trị cơ sở dữ liệu",
+                    "Một trình duyệt web"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "React là gì?",
+                options: [
+                    "Một thư viện JavaScript để xây dựng giao diện người dùng",
+                    "Một ngôn ngữ lập trình mới",
+                    "Một cơ sở dữ liệu",
+                    "Một hệ điều hành"
+                ],
+                correctIndex: 0
+            }
+        ];
+
+        // Biến lưu trạng thái quiz
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = -1;
+
+        // Hàm hiển thị câu hỏi
+        function displayQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionText.textContent = `Câu ${currentQuestionIndex + 1}: ${currentQuestion.question}`;
+            
+            const optionElements = optionsContainer.querySelectorAll('.option');
+            optionElements.forEach((option, index) => {
+                option.textContent = currentQuestion.options[index];
+                option.classList.remove('selected');
+            });
+            
+            selectedOptionIndex = -1;
+            updateButtonStates();
+        }
+
+        // Hàm cập nhật trạng thái các nút
+        function updateButtonStates() {
+            nextQuestionBtn.disabled = selectedOptionIndex === -1;
+            saveScoreBtn.disabled = currentQuestionIndex < quizData.length - 1;
+            
+            if (currentQuestionIndex >= quizData.length - 1) {
+                nextQuestionBtn.style.display = 'none';
+                saveScoreBtn.style.display = 'inline-block';
+            } else {
+                nextQuestionBtn.style.display = 'inline-block';
+                saveScoreBtn.style.display = 'none';
+            }
+        }
+
+        // Hàm cập nhật điểm
+        function updateScore() {
+            scoreDisplay.textContent = `Điểm: ${score}/${quizData.length}`;
+        }
+
+        // Hàm lưu điểm vào Firebase
+        async function saveScore(name, scoreValue) {
+            try {
+                const scoresRef = ref(database, 'scores');
+                const newScoreRef = push(scoresRef);
+                await set(newScoreRef, {
+                    name: name,
+                    score: scoreValue,
+                    timestamp: Date.now()
+                });
+                console.log("Điểm đã được lưu thành công");
+                return true;
+            } catch (error) {
+                console.error("Lỗi khi lưu điểm:", error);
+                return false;
+            }
+        }
+
+        // Hàm tải bảng xếp hạng từ Firebase
+        async function loadLeaderboard() {
+            try {
+                const scoresRef = ref(database);
+                const snapshot = await get(child(scoresRef, 'scores'));
+                
+                if (snapshot.exists()) {
+                    const scores = [];
+                    snapshot.forEach((childSnapshot) => {
+                        scores.push({
+                            id: childSnapshot.key,
+                            ...childSnapshot.val()
+                        });
+                    });
+                    
+                    // Sắp xếp theo điểm từ cao đến thấp
+                    scores.sort((a, b) => b.score - a.score);
+                    
+                    // Hiển thị bảng xếp hạng
+                    scoreTableBody.innerHTML = '';
+                    scores.forEach((score, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${score.name}</td>
+                            <td>${score.score}</td>
+                        `;
+                        scoreTableBody.appendChild(row);
+                    });
+                } else {
+                    scoreTableBody.innerHTML = '<tr><td colspan="3">Chưa có dữ liệu</td></tr>';
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải bảng xếp hạng:", error);
+                scoreTableBody.innerHTML = '<tr><td colspan="3">Lỗi khi tải dữ liệu</td></tr>';
+            }
+        }
+
+        // Sự kiện cho màn hình chính
+        startQuizBtn.addEventListener('click', () => {
+            homeScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            leaderboardScreen.style.display = 'none';
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            displayQuestion();
+            updateScore();
+        });
+
+        viewLeaderboardBtn.addEventListener('click', () => {
+            homeScreen.style.display = 'none';
+            quizScreen.style.display = 'none';
+            leaderboardScreen.style.display = 'block';
+            loadLeaderboard();
+        });
+
+        // Sự kiện cho các lựa chọn
+        optionsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('option')) {
+                const options = optionsContainer.querySelectorAll('.option');
+                options.forEach(opt => opt.classList.remove('selected'));
+                
+                e.target.classList.add('selected');
+                selectedOptionIndex = parseInt(e.target.dataset.index);
+                updateButtonStates();
+            }
+        });
+
+        // Sự kiện cho nút câu tiếp theo
+        nextQuestionBtn.addEventListener('click', () => {
+            // Kiểm tra đáp án và cập nhật điểm
+            const currentQuestion = quizData[currentQuestionIndex];
+            if (selectedOptionIndex === currentQuestion.correctIndex) {
+                score++;
+                updateScore();
+            }
+            
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                displayQuestion();
+            } else {
+                // Kết thúc quiz
+                questionText.textContent = "Bạn đã hoàn thành bài quiz!";
+                optionsContainer.innerHTML = '';
+                updateButtonStates();
+            }
+        });
+
+        // Sự kiện cho nút lưu điểm
+        saveScoreBtn.addEventListener('click', () => {
+            // Kiểm tra đáp án câu cuối cùng
+            const currentQuestion = quizData[currentQuestionIndex];
+            if (selectedOptionIndex === currentQuestion.correctIndex) {
+                score++;
+                updateScore();
+            }
+            
+            saveScoreModal.style.display = 'flex';
+        });
+
+        // Sự kiện cho modal lưu điểm
+        cancelSaveBtn.addEventListener('click', () => {
+            saveScoreModal.style.display = 'none';
+        });
+
+        confirmSaveBtn.addEventListener('click', async () => {
+            const playerName = playerNameInput.value.trim();
+            if (playerName) {
+                const success = await saveScore(playerName, score);
+                if (success) {
+                    saveScoreModal.style.display = 'none';
+                    homeScreen.style.display = 'none';
+                    quizScreen.style.display = 'none';
+                    leaderboardScreen.style.display = 'block';
+                    loadLeaderboard();
+                }
+            } else {
+                alert("Vui lòng nhập tên của bạn");
+            }
+        });
+
+        // Sự kiện cho nút quay lại
+        backToHomeBtn.addEventListener('click', () => {
+            homeScreen.style.display = 'flex';
+            quizScreen.style.display = 'none';
+            leaderboardScreen.style.display = 'none';
+        });
+
+        // Khởi tạo ban đầu
+        updateButtonStates();
+    </script>
+</body>
+</html>
